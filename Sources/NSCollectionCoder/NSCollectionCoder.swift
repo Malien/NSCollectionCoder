@@ -68,7 +68,7 @@ private struct DictionaryDecodingContainer<Key: CodingKey>: KeyedDecodingContain
         guard let value = dictionary.value(forKey: key.stringValue) else {
             throw DecodingError.keyNotFound(key, DecodingError.Context(
                 codingPath: self.codingPath,
-                debugDescription: "Dictionary key \(key) not found in \(self.dictionary)"
+                debugDescription: "Dictionary key \(key.stringValue.debugDescription) not found in \(self.dictionary)"
             ))
         }
         return try body(value)
@@ -82,7 +82,7 @@ private struct DictionaryDecodingContainer<Key: CodingKey>: KeyedDecodingContain
             guard let nestedDictionary = value as? NSDictionary else {
                 throw DecodingError.typeMismatch(NSDictionary.self, DecodingError.Context(
                     codingPath: self.codingPath + [key],
-                    debugDescription: "Expected value at key \(key) to be NSDictionary, not \(value)"
+                    debugDescription: "Expected value at key \(key.stringValue.debugDescription) to be NSDictionary, not \(value)"
                 ))
             }
             return KeyedDecodingContainer(DictionaryDecodingContainer<NestedKey>(
@@ -95,7 +95,7 @@ private struct DictionaryDecodingContainer<Key: CodingKey>: KeyedDecodingContain
             guard let array = value as? NSArray else {
                 throw DecodingError.typeMismatch(NSArray.self, DecodingError.Context(
                     codingPath: self.codingPath + [key],
-                    debugDescription: "Expected value at key \(key) to be NSArray, not \(value)"
+                    debugDescription: "Expected value at key \(key.stringValue.debugDescription) to be NSArray, not \(value)"
                 ))
             }
             return ArrayDecodingContainer(of: array, codingPath: self.codingPath + [key])
@@ -121,7 +121,7 @@ private struct DictionaryDecodingContainer<Key: CodingKey>: KeyedDecodingContain
             guard let casted = value as? T else {
                 throw DecodingError.typeMismatch(T.self, DecodingError.Context(
                     codingPath: codingPath + [key],
-                    debugDescription: "Expected value at key \(key) to be \(T.self), not \(value)"
+                    debugDescription: "Expected value at key \(key.stringValue.debugDescription) to be \(T.self), not \(value)"
                 ))
             }
             return casted
@@ -195,7 +195,7 @@ private struct ArrayDecodingContainer: UnkeyedDecodingContainer {
             guard let nestedDictionary = element as? NSDictionary else {
                 throw DecodingError.typeMismatch(NSDictionary.self, DecodingError.Context(
                     codingPath: codingPath,
-                    debugDescription: "Expected element at position \(key) to be NSDictionary, not \(element)"
+                    debugDescription: "Expected element at position \(key.rawValue) to be NSDictionary, not \(element)"
                 ))
             }
             return KeyedDecodingContainer(DictionaryDecodingContainer<NestedKey>(
@@ -210,7 +210,7 @@ private struct ArrayDecodingContainer: UnkeyedDecodingContainer {
             guard let nestedArray = element as? NSArray else {
                 throw DecodingError.typeMismatch(NSArray.self, DecodingError.Context(
                     codingPath: codingPath,
-                    debugDescription: "Expected element at position \(key) to be an NSArray, not \(element)"
+                    debugDescription: "Expected element at position \(key.rawValue) to be an NSArray, not \(element)"
                 ))
             }
             return ArrayDecodingContainer(of: nestedArray, codingPath: codingPath)
@@ -248,7 +248,7 @@ private struct ArrayDecodingContainer: UnkeyedDecodingContainer {
             guard let casted = element as? T else {
                 throw DecodingError.typeMismatch(T.self, DecodingError.Context(
                     codingPath: codingPath,
-                    debugDescription: "Expected element at position \(key) to be \(T.self), not \(element)"
+                    debugDescription: "Expected element at position \(key.rawValue) to be \(T.self), not \(element)"
                 ))
             }
             return casted

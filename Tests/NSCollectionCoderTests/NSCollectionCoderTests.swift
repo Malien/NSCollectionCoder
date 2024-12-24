@@ -81,3 +81,20 @@ import Foundation
     let output = try decode(Target.self, fromNSCollection: input)
     #expect(output == Target(required: "foo", optional: "bar", missing: nil))
 }
+
+@Test func failOnMissingKey() async throws {
+    let input = [
+        "required": "foo",
+        "optional": "bar"
+    ]
+    
+    struct Target: Decodable, Equatable {
+        var required: String
+        var optional: String
+        var missing: String
+    }
+    
+    #expect(throws: DecodingError.self) {
+        try decode(Target.self, fromNSCollection: input)
+    }
+}

@@ -1,10 +1,6 @@
 import Foundation
 
-public enum NSCollectionDecodingError: Error {
-    case expectedDictionary(found: Any.Type)
-    case expectedArray(found: Any.Type)
-    case expectedPrimitive(of: Any.Type, found: Any.Type)
-}
+
 
 public func decode<T: Decodable>(_: T.Type, fromNSCollection collection: Any) throws -> T {
     try T(from: NSCollectionDecoder(value: collection, codingPath: []))
@@ -23,7 +19,7 @@ private struct NSCollectionDecoder: Decoder {
     
     func container<Key>(keyedBy keyType: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         guard let dict = value as? NSDictionary else {
-            throw NSCollectionDecodingError.expectedDictionary(found: type(of: value))
+            throw DecodingError.typeMismatch(NSDictionary.self, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected NSDictionary but found \(type(of: value))."))
         }
         return KeyedDecodingContainer(DictionaryDecodingContainer(
             of: dict, keyedBy: keyType, codingPath: codingPath))
@@ -31,7 +27,7 @@ private struct NSCollectionDecoder: Decoder {
     
     func unkeyedContainer() throws -> any UnkeyedDecodingContainer {
         guard let array = value as? NSArray else {
-            throw NSCollectionDecodingError.expectedArray(found: type(of: value))
+            throw DecodingError.typeMismatch(NSDictionary.self, DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected NSArray but found \(type(of: value))."))
         }
         return ArrayDecodingContainer(of: array, codingPath: codingPath)
     }
